@@ -18,12 +18,19 @@ function moveLines(){
 
     lines.forEach(function(item){
         if(item.y >= roadDetails.bottom){
-            item.y -= roadDetails.bottom+250;
+            item.y -= roadDetails.bottom+300;
         }
 
-        item.y += player.speed;
+        item.y += player.speed; 
         item.style.top = item.y + "px";
     })
+}
+
+function endGame(){
+    player.startGame = false;
+    popup.classList.remove('hide');
+    popup.innerHTML = `GAME OVER<br>YOUR FINAL SCORE IS : ${Math.round(player.score/40)}<br> CLICK HERE TO RESTART THE GAME AGAIN`;
+    score.classList.add('hide');
 }
 
 function moveRunningCars(car){
@@ -32,16 +39,44 @@ function moveRunningCars(car){
 
     runningCars.forEach(function(item){
         if(gameOver(car,item)){
-            console.log("Game Over");
+            endGame();
         }
 
         if(item.y >= roadDetails.bottom){
-            item.y -= roadDetails.bottom+50;
+            item.y = -300;
             item.style.left = Math.floor(Math.random()*350) + "px";
         }
 
-        item.y += player.speed;
-        item.style.top = item.y + "px";
+        if(Math.round(player.score/40) <= 50){
+            item.y += player.speed;
+            item.style.top = item.y + "px";
+        }
+
+        if(Math.round(player.score/40) > 50 && Math.round(player.score/40) <= 100){
+            item.y += (player.speed+5);
+            item.style.top = item.y + "px";
+        }
+        
+        if(Math.round(player.score/40) > 100 && Math.round(player.score/40) <= 170){
+            item.y += (player.speed+10);
+            item.style.top = item.y + "px";
+        }
+
+        if(Math.round(player.score/40) > 170 && Math.round(player.score/40) <= 220){
+            item.y += (player.speed+15);
+            item.style.top = item.y + "px";
+        }
+
+        if(Math.round(player.score/40) > 220 && Math.round(player.score/40) <= 250){
+            item.y += (player.speed+10);
+            item.style.top = item.y + "px";
+        }
+
+        if(Math.round(player.score/40) > 250 && Math.round(player.score/40) <= 350){
+            item.y += (player.speed+20);
+            item.style.top = item.y + "px";
+        }
+        
     })
 }
 
@@ -57,20 +92,25 @@ function playGame(){
 
         if(keys.ArrowUp && player.y>(roadDetails.top+100)) {player.y -= player.speed}
         if(keys.ArrowLeft && player.x>0) {player.x -= player.speed}
-        if(keys.ArrowRight && player.x<(roadDetails.width-50)) {player.x += player.speed}
-        if(keys.ArrowDown && player.y<(roadDetails.bottom-70)) {player.y += player.speed}
+        if(keys.ArrowRight && player.x<(roadDetails.width-65)) {player.x += player.speed}
+        if(keys.ArrowDown && player.y<(roadDetails.bottom-90)) {player.y += player.speed}
 
         car.style.top = player.y + "px";
         car.style.left = player.x + "px";
 
         window.requestAnimationFrame(playGame);
+        player.score++;
+        score.innerHTML = `SCORE : ${Math.round(player.score/40)}`;
     }
 }
 
 function startGame(){
-    road.classList.remove('hide');
+    //road.classList.remove('hide');
+    score.classList.remove('hide');
     popup.classList.add('hide');
+    road.innerHTML = "";
     player.startGame = true;
+    player.score = 0;
     window.requestAnimationFrame(playGame);
 
     for(let i=0;i<8;i++){
@@ -88,12 +128,14 @@ function startGame(){
     player.x = car.offsetLeft;
     player.y = car.offsetTop;
 
-    for(let i=0;i<4;i++){
+    for(let i=0;i<6;i++){
         let runningCar = document.createElement('div');
         runningCar.setAttribute('class','runningCarDiv');
-        runningCar.y = (i*200);
+        runningCar.y = ((i+1)*350) * -1;
         runningCar.style.top = runningCar.y + "px";
-        runningCar.style.background = '#64958f';
+        
+        ran = Math.ceil(Math.random()*4);
+        runningCar.style.backgroundImage = "url('opp"+ran+".png')";
         runningCar.style.left = Math.floor(Math.random()*350) + "px";
         road.appendChild(runningCar);
     }
